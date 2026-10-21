@@ -1,5 +1,5 @@
 -- Query 1: Join Weak Entity (`Shows`), Inheritance Subclass (`UpcomingShow`),
--- and Lineup (`PlaysAt`) to display upcoming lineups sorted by date and billing order[cite: 1, 2, 6, 9, 11].
+-- and Lineup (`PlaysAt`) to display upcoming lineups sorted by date and billing order.
 
 
 
@@ -25,7 +25,7 @@ ORDER BY s.`date_time` ASC, p.`billing_order` ASC;
 
 
 -- Query 2: Query across 4NF decomposed tables (`Artist`, `ArtistGenre`, `ArtistMember`)
--- to retrieve all members of 'Indie Rock' bands[cite: 1, 2, 6, 10].
+-- to retrieve all members of 'Indie Rock' bands.
 
 
 
@@ -41,7 +41,7 @@ JOIN `ArtistMember` am ON a.`name` = am.`artist_name`
 WHERE ag.`genre` = 'Indie Rock'
 ORDER BY a.`name` ASC, am.`member_name` ASC;
 
--- Query 3: Join `Shows`, `Venue`, and `Books` to find all-ages shows and their co-promoters[cite: 1, 2, 6].
+-- Query 3: Join `Shows`, `Venue`, and `Books` to find all-ages shows and their co-promoters.
 
 
 
@@ -59,7 +59,7 @@ JOIN `Books` b ON s.`venue_name` = b.`venue_name` AND s.`date_time` = b.`date_ti
 WHERE s.`all_ages` = TRUE
 ORDER BY b.`promoter_name` ASC;
 
--- Query 4: Retrieve archived footage for past shows along with headlining artist[cite: 1, 2, 6, 9, 11].
+-- Query 4: Retrieve archived footage for past shows along with headlining artist.
 
 
 

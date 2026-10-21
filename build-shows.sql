@@ -1,6 +1,6 @@
 
 -- =========================================================================
--- 1. STRONG ENTITY SETS (BCNF & 4NF Single-Valued Attributes)[cite: 1, 2, 10]
+-- 1. STRONG ENTITY SETS (BCNF & 4NF Single-Valued Attributes)
 -- =========================================================================
 
 CREATE TABLE `Venue` (
@@ -31,7 +31,7 @@ CREATE TABLE `Promoter` (
 );
 
 -- =========================================================================
--- 2. 4NF DECOMPOSED RELATIONS (Preserving MVDs)[cite: 1, 2, 10]
+-- 2. 4NF DECOMPOSED RELATIONS (Preserving MVDs)
 -- Isolates independent multi-valued attributes:
 --   artist_name ->> member_name
 --   artist_name ->> genre
@@ -63,9 +63,9 @@ CREATE TABLE `PromoterGenre` (
 );
 
 -- =========================================================================
--- 3. WEAK ENTITY SET: SHOWS (Supported by VENUE via "happen @")[cite: 1, 2, 9]
+-- 3. WEAK ENTITY SET: SHOWS (Supported by VENUE via "happen @")
 -- Recognizable in SQL DDL because PART OF the primary key (`venue_name`)
--- is also a foreign key referencing `Venue`(`name`)[cite: 9].
+-- is also a foreign key referencing `Venue`(`name`).
 -- =========================================================================
 
 CREATE TABLE `Shows` (
@@ -79,9 +79,9 @@ CREATE TABLE `Shows` (
 );
 
 -- =========================================================================
--- 4. INHERITANCE SUBSETS ("isa" Subclasses of SHOWS)[cite: 1, 2, 9, 11]
+-- 4. INHERITANCE SUBSETS ("isa" Subclasses of SHOWS)
 -- Matches the subset pattern where the ENTIRE primary key of the subclass
--- is also a foreign key referencing the superclass primary key[cite: 9, 11].
+-- is also a foreign key referencing the superclass primary key.
 -- =========================================================================
 
 CREATE TABLE `UpcomingShow` (
@@ -104,10 +104,10 @@ CREATE TABLE `PastShow` (
 );
 
 -- =========================================================================
--- 5. MANY-TO-MANY RELATIONSHIP RELATIONS[cite: 2, 4]
+-- 5. MANY-TO-MANY RELATIONSHIP RELATIONS
 -- For each involved entity set, its identifiers become attributes, any
 -- relationship attributes are included, and the combination of foreign
--- identifiers forms the primary key[cite: 4].
+-- identifiers forms the primary key.
 -- =========================================================================
 
 -- Relationship: ARTIST — plays @ — SHOWS[cite: 2, 4]
@@ -124,7 +124,7 @@ CREATE TABLE `PlaysAt` (
         ON DELETE CASCADE ON UPDATE CASCADE
 );
 
--- Relationship: PROMOTER — books — SHOWS[cite: 2, 4]
+-- Relationship: PROMOTER — books — SHOWS
 CREATE TABLE `Books` (
     `promoter_name` VARCHAR(100),
     `venue_name` VARCHAR(100),
@@ -136,7 +136,7 @@ CREATE TABLE `Books` (
         ON DELETE CASCADE ON UPDATE CASCADE
 );
 
--- Relationship: ARTIST — represents — PROMOTER[cite: 2, 4]
+-- Relationship: ARTIST — represents — PROMOTER
 CREATE TABLE `Represents` (
     `artist_name` VARCHAR(100),
     `promoter_name` VARCHAR(100),
@@ -147,7 +147,7 @@ CREATE TABLE `Represents` (
         ON DELETE CASCADE ON UPDATE CASCADE
 );
 
--- Relationship: PROMOTER — contact — VENUE[cite: 2, 4]
+-- Relationship: PROMOTER — contact — VENUE
 CREATE TABLE `Contact` (
     `promoter_name` VARCHAR(100),
     `venue_name` VARCHAR(100),

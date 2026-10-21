@@ -1,4 +1,5 @@
 -- Insert Venues
+
 INSERT INTO `Venue` (`name`, `address`, `tech_info`, `rate`, `hours`, `contact_info`, `capacity`, `liquor_19_plus`, `note`) VALUES
 ('Capital Ballroom', '858 Yates St, Victoria, BC', 'Full house PA, 32-ch digital desk', 1500.00, '19:00 - 02:00', 'booking@thecapitalballroom.com', 550, TRUE, 'Load-in via back alley'),
 ('Quadratic Sound', '655 Queens Ave, Victoria, BC', 'Quadraphonic sound system, backline available', 450.00, '18:00 - 23:30', 'info@quadraticsound.com', 150, FALSE, 'All-ages DIY community space');

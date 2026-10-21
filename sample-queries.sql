@@ -1,3 +1,4 @@
+
 -- Query 1: Join Weak Entity (`Shows`), Inheritance Subclass (`UpcomingShow`),
 -- and Lineup (`PlaysAt`) to display upcoming lineups sorted by date and billing order.
 

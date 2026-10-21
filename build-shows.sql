@@ -38,6 +38,7 @@ CREATE TABLE `Promoter` (
 --   promoter_name ->> genre
 -- =========================================================================
 
+
 CREATE TABLE `ArtistMember` (
     `artist_name` VARCHAR(100),
     `member_name` VARCHAR(100),

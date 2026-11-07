@@ -1,3 +1,12 @@
+-- =========================================================================
+-- build-shows.sql - schema for local-shows
+-- Run Order: build-shows -> seed-data.sql -> views.sql -> procedures.sql 
+-- -> roles-and-grants.sql
+-- note: DROPS script allows for database to be re-run
+-- =========================================================================
+DROP DATABASE IF EXISTS 'showsdb';
+CREATE DATABASE 'showsdb' CHARACTER SET utf8mb4;
+USE 'showsdb';
 
 -- =========================================================================
 -- 1. STRONG ENTITY SETS (BCNF & 4NF Single-Valued Attributes)
@@ -157,4 +166,52 @@ CREATE TABLE `Contact` (
         ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (`venue_name`) REFERENCES `Venue`(`name`)
         ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- =========================================================================
+-- 6. USER ACCOUNTS
+-- Integrates user-views.sql
+-- App.username must match the MySQL account name (ex. 'alice')
+-- There is no 'role' column asa person's role(s) is derived from where they
+-- appear in linked table(s) (storing role twice could cause a disagreement).
+-- For example, a musician can also be a promoter
+-- Each link table is many-to-many: a band can have several managers, and one
+-- person can manage several acts. Separate link tables (rather than one
+-- generic (entity_type, entity_name) table) keep real foreign keys.
+-- =========================================================================
+
+CREATE TABLE 'AppUser' (
+    'username' VARCHAR(50) PRIMARY KEY,
+    'display_name' VARCHAR(100) NOT NULL,
+    'email' VARCHAR(200)
+);
+
+CREATE TABLE 'UserArtist' (
+    'username' VARCHAR(50),
+    'artist_name' VARCHAR(100) NOT NULL,
+    PRIMARY KEY ('username', 'artist_name'),
+    FOREIGN KEY ('username') REFERENCES 'AppUser' ('username')
+        ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY ('artist_name') REFERENCES 'Artist' ('name')
+        ON DELETE CASCADE ON UPDATE CASCADE,
+);
+
+CREATE TABLE 'UserPromoter' (
+    'username' VARCHAR(50),
+    'promoter_name' VARCHAR(100) NOT NULL,
+    PRIMARY KEY ('username', 'promoter_name'),
+    FOREIGN KEY ('username') REFERENCES 'AppUser' ('username')
+        ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY ('promoter_name') REFERENCES 'Promoter' ('name')
+        ON DELETE CASCADE ON UPDATE CASCADE,
+);
+
+CREATE TABLE 'UserVenue' (
+    'username' VARCHAR(50),
+    'venue_name' VARCHAR(100) NOT NULL,
+    PRIMARY KEY ('username', 'venue_name'),
+    FOREIGN KEY ('username') REFERENCES 'AppUser' ('username')
+        ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY ('venue_name') REFERENCES 'Venue' ('name')
+        ON DELETE CASCADE ON UPDATE CASCADE,
 );

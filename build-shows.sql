@@ -1,17 +1,17 @@
 -- =========================================================================
 -- build-shows.sql - schema for local-shows
--- Run Order: build-shows -> seed-data.sql -> views.sql -> procedures.sql 
+-- Run Order: build-shows -> seed-data.sql -> views.sql -> procedures.sql
 -- -> permissions.sql
 -- note: DROPS script allows for database to be re-run
 -- =========================================================================
-DROP DATABASE IF EXISTS 'showsdb';
-CREATE DATABASE 'showsdb' CHARACTER SET utf8mb4;
-USE 'showsdb';
-
+DROP DATABASE IF EXISTS `showsdb`;
+CREATE DATABASE `showsdb` CHARACTER SET utf8mb4;
+USE `showsdb`;
+ 
 -- =========================================================================
 -- 1. STRONG ENTITY SETS (BCNF & 4NF Single-Valued Attributes)
 -- =========================================================================
-
+ 
 CREATE TABLE `Venue` (
     `name` VARCHAR(100) PRIMARY KEY,
     `address` VARCHAR(255) NOT NULL,
@@ -23,7 +23,7 @@ CREATE TABLE `Venue` (
     `liquor_19_plus` BOOLEAN NOT NULL DEFAULT FALSE,
     `note` TEXT
 );
-
+ 
 CREATE TABLE `Artist` (
     `name` VARCHAR(100) PRIMARY KEY,
     `since` DATE,
@@ -31,14 +31,14 @@ CREATE TABLE `Artist` (
     `bandcamp` VARCHAR(255),
     `contact_info` VARCHAR(255) NOT NULL
 );
-
+ 
 CREATE TABLE `Promoter` (
     `name` VARCHAR(100) PRIMARY KEY,
     `since` DATE,
     `bio` TEXT,
     `contact_info` VARCHAR(255) NOT NULL
 );
-
+ 
 -- =========================================================================
 -- 2. 4NF DECOMPOSED RELATIONS (Preserving MVDs)
 -- Isolates independent multi-valued attributes:
@@ -46,8 +46,8 @@ CREATE TABLE `Promoter` (
 --   artist_name ->> genre
 --   promoter_name ->> genre
 -- =========================================================================
-
-
+ 
+ 
 CREATE TABLE `ArtistMember` (
     `artist_name` VARCHAR(100),
     `member_name` VARCHAR(100),
@@ -55,7 +55,7 @@ CREATE TABLE `ArtistMember` (
     FOREIGN KEY (`artist_name`) REFERENCES `Artist`(`name`)
         ON DELETE CASCADE ON UPDATE CASCADE
 );
-
+ 
 CREATE TABLE `ArtistGenre` (
     `artist_name` VARCHAR(100),
     `genre` VARCHAR(50),
@@ -63,7 +63,7 @@ CREATE TABLE `ArtistGenre` (
     FOREIGN KEY (`artist_name`) REFERENCES `Artist`(`name`)
         ON DELETE CASCADE ON UPDATE CASCADE
 );
-
+ 
 CREATE TABLE `PromoterGenre` (
     `promoter_name` VARCHAR(100),
     `genre` VARCHAR(50),
@@ -71,13 +71,13 @@ CREATE TABLE `PromoterGenre` (
     FOREIGN KEY (`promoter_name`) REFERENCES `Promoter`(`name`)
         ON DELETE CASCADE ON UPDATE CASCADE
 );
-
+ 
 -- =========================================================================
 -- 3. WEAK ENTITY SET: SHOWS (Supported by VENUE via "happen @")
 -- Recognizable in SQL DDL because PART OF the primary key (`venue_name`)
 -- is also a foreign key referencing `Venue`(`name`).
 -- =========================================================================
-
+ 
 CREATE TABLE `Shows` (
     `venue_name` VARCHAR(100),
     `date_time` DATETIME,
@@ -87,13 +87,13 @@ CREATE TABLE `Shows` (
     FOREIGN KEY (`venue_name`) REFERENCES `Venue`(`name`)
         ON DELETE CASCADE ON UPDATE CASCADE
 );
-
+ 
 -- =========================================================================
 -- 4. INHERITANCE SUBSETS ("isa" Subclasses of SHOWS)
 -- Matches the subset pattern where the ENTIRE primary key of the subclass
 -- is also a foreign key referencing the superclass primary key.
 -- =========================================================================
-
+ 
 CREATE TABLE `UpcomingShow` (
     `venue_name` VARCHAR(100),
     `date_time` DATETIME,
@@ -103,7 +103,7 @@ CREATE TABLE `UpcomingShow` (
     FOREIGN KEY (`venue_name`, `date_time`) REFERENCES `Shows`(`venue_name`, `date_time`)
         ON DELETE CASCADE ON UPDATE CASCADE
 );
-
+ 
 CREATE TABLE `PastShow` (
     `venue_name` VARCHAR(100),
     `date_time` DATETIME,
@@ -112,15 +112,15 @@ CREATE TABLE `PastShow` (
     FOREIGN KEY (`venue_name`, `date_time`) REFERENCES `Shows`(`venue_name`, `date_time`)
         ON DELETE CASCADE ON UPDATE CASCADE
 );
-
+ 
 -- =========================================================================
 -- 5. MANY-TO-MANY RELATIONSHIP RELATIONS
 -- For each involved entity set, its identifiers become attributes, any
 -- relationship attributes are included, and the combination of foreign
 -- identifiers forms the primary key.
 -- =========================================================================
-
--- Relationship: ARTIST — plays @ — SHOWS[cite: 2, 4]
+ 
+-- Relationship: ARTIST — plays @ — SHOWS
 CREATE TABLE `PlaysAt` (
     `artist_name` VARCHAR(100),
     `venue_name` VARCHAR(100),
@@ -128,12 +128,15 @@ CREATE TABLE `PlaysAt` (
     `set_time` TIME,
     `billing_order` INT UNSIGNED,
     PRIMARY KEY (`artist_name`, `venue_name`, `date_time`),
+    -- Two acts can't share a billing slot at the same show (so there is only
+    -- ever one headliner, billing_order = 1). NULLs are still allowed.
+    UNIQUE KEY `uq_plays_billing` (`venue_name`, `date_time`, `billing_order`),
     FOREIGN KEY (`artist_name`) REFERENCES `Artist`(`name`)
         ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (`venue_name`, `date_time`) REFERENCES `Shows`(`venue_name`, `date_time`)
         ON DELETE CASCADE ON UPDATE CASCADE
 );
-
+ 
 -- Relationship: PROMOTER — books — SHOWS
 CREATE TABLE `Books` (
     `promoter_name` VARCHAR(100),
@@ -145,7 +148,7 @@ CREATE TABLE `Books` (
     FOREIGN KEY (`venue_name`, `date_time`) REFERENCES `Shows`(`venue_name`, `date_time`)
         ON DELETE CASCADE ON UPDATE CASCADE
 );
-
+ 
 -- Relationship: ARTIST — represents — PROMOTER
 CREATE TABLE `Represents` (
     `artist_name` VARCHAR(100),
@@ -156,7 +159,7 @@ CREATE TABLE `Represents` (
     FOREIGN KEY (`promoter_name`) REFERENCES `Promoter`(`name`)
         ON DELETE CASCADE ON UPDATE CASCADE
 );
-
+ 
 -- Relationship: PROMOTER — contact — VENUE
 CREATE TABLE `Contact` (
     `promoter_name` VARCHAR(100),
@@ -167,51 +170,52 @@ CREATE TABLE `Contact` (
     FOREIGN KEY (`venue_name`) REFERENCES `Venue`(`name`)
         ON DELETE CASCADE ON UPDATE CASCADE
 );
-
+ 
 -- =========================================================================
 -- 6. USER ACCOUNTS
 -- Integrates user-views.sql
--- App.username must match the MySQL account name (ex. 'alice')
--- There is no 'role' column asa person's role(s) is derived from where they
+-- AppUser.username must match the MySQL account name (ex. 'alice')
+-- There is no 'role' column as a person's role(s) is derived from where they
 -- appear in linked table(s) (storing role twice could cause a disagreement).
 -- For example, a musician can also be a promoter
 -- Each link table is many-to-many: a band can have several managers, and one
 -- person can manage several acts. Separate link tables (rather than one
 -- generic (entity_type, entity_name) table) keep real foreign keys.
 -- =========================================================================
-
-CREATE TABLE 'AppUser' (
-    'username' VARCHAR(50) PRIMARY KEY,
-    'display_name' VARCHAR(100) NOT NULL,
-    'email' VARCHAR(200)
+ 
+CREATE TABLE `AppUser` (
+    `username` VARCHAR(50) PRIMARY KEY,
+    `display_name` VARCHAR(100) NOT NULL,
+    `email` VARCHAR(200)
 );
-
-CREATE TABLE 'UserArtist' (
-    'username' VARCHAR(50),
-    'artist_name' VARCHAR(100) NOT NULL,
-    PRIMARY KEY ('username', 'artist_name'),
-    FOREIGN KEY ('username') REFERENCES 'AppUser' ('username')
+ 
+CREATE TABLE `UserArtist` (
+    `username` VARCHAR(50),
+    `artist_name` VARCHAR(100),
+    PRIMARY KEY (`username`, `artist_name`),
+    FOREIGN KEY (`username`) REFERENCES `AppUser` (`username`)
         ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY ('artist_name') REFERENCES 'Artist' ('name')
-        ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (`artist_name`) REFERENCES `Artist` (`name`)
+        ON DELETE CASCADE ON UPDATE CASCADE
 );
-
-CREATE TABLE 'UserPromoter' (
-    'username' VARCHAR(50),
-    'promoter_name' VARCHAR(100) NOT NULL,
-    PRIMARY KEY ('username', 'promoter_name'),
-    FOREIGN KEY ('username') REFERENCES 'AppUser' ('username')
+ 
+CREATE TABLE `UserPromoter` (
+    `username` VARCHAR(50),
+    `promoter_name` VARCHAR(100),
+    PRIMARY KEY (`username`, `promoter_name`),
+    FOREIGN KEY (`username`) REFERENCES `AppUser` (`username`)
         ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY ('promoter_name') REFERENCES 'Promoter' ('name')
-        ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (`promoter_name`) REFERENCES `Promoter` (`name`)
+        ON DELETE CASCADE ON UPDATE CASCADE
 );
-
-CREATE TABLE 'UserVenue' (
-    'username' VARCHAR(50),
-    'venue_name' VARCHAR(100) NOT NULL,
-    PRIMARY KEY ('username', 'venue_name'),
-    FOREIGN KEY ('username') REFERENCES 'AppUser' ('username')
+ 
+CREATE TABLE `UserVenue` (
+    `username` VARCHAR(50),
+    `venue_name` VARCHAR(100),
+    PRIMARY KEY (`username`, `venue_name`),
+    FOREIGN KEY (`username`) REFERENCES `AppUser` (`username`)
         ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY ('venue_name') REFERENCES 'Venue' ('name')
-        ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (`venue_name`) REFERENCES `Venue` (`name`)
+        ON DELETE CASCADE ON UPDATE CASCADE
 );
+ 

@@ -1,7 +1,7 @@
 -- =========================================================================
 -- build-shows.sql - schema for local-shows
 -- Run Order: build-shows -> seed-data.sql -> views.sql -> procedures.sql 
--- -> roles-and-grants.sql
+-- -> permissions.sql
 -- note: DROPS script allows for database to be re-run
 -- =========================================================================
 DROP DATABASE IF EXISTS 'showsdb';

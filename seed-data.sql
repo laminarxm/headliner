@@ -1,3 +1,8 @@
+-- =========================================================================
+-- seed-data.sql
+-- notes:
+-- =========================================================================
+
 -- Insert Venues
 
 INSERT INTO `Venue` (`name`, `address`, `tech_info`, `rate`, `hours`, `contact_info`, `capacity`, `liquor_19_plus`, `note`) VALUES
@@ -77,3 +82,26 @@ INSERT INTO `Contact` (`promoter_name`, `venue_name`) VALUES
 ('Atomique Productions', 'Capital Ballroom'),
 ('Atomique Productions', 'Quadratic Sound'),
 ('Gigtoria Collective', 'Quadratic Sound');
+
+-- Insert App Users and the entities they manage.
+-- (The fan account 'fan1' is a plain MySQL account with no AppUser row:
+--  basic users don't manage anything.)
+INSERT INTO `AppUser` (`username`, `display_name`, `email`) VALUES
+('alice', 'Alice (manages The Beths)', 'alice@gmail.com'),
+('carey', 'Carey (manages Frog Eyes)', 'carey@frogeyes.ca'),
+('pat', 'Pat (Atomique Productions)', 'pat@atomique.com'),
+('gina', 'Gina (Gigtoria Collective)', 'gina@gigtoria.com'),
+('vera', 'Vera (Capital Ballroom manager)', 'cap_ballroom_booking@hotmail.com'),
+('quinn', 'Quinn (Quadratic Sound manager)',  'quinn_quad@yahoo.ca');
+ 
+INSERT INTO `UserArtist` (`username`, `artist_name`) VALUES
+('alice', 'The Beths'),
+('carey', 'Frog Eyes');
+ 
+INSERT INTO `UserPromoter` (`username`, `promoter_name`) VALUES
+('pat',  'Atomique Productions'),
+('gina', 'Gigtoria Collective');
+ 
+INSERT INTO `UserVenue` (`username`, `venue_name`) VALUES
+('vera', 'Capital Ballroom'),
+('quinn', 'Quadratic Sound');

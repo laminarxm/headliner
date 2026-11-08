@@ -1,8 +1,11 @@
+-- =========================================================================
+-- sample-queries.sql
+-- notes:
+-- =========================================================================
+USE 'showsdb';
 
 -- Query 1: Join Weak Entity (`Shows`), Inheritance Subclass (`UpcomingShow`),
 -- and Lineup (`PlaysAt`) to display upcoming lineups sorted by date and billing order.
-
-
 
 SELECT 
     s.`name` AS `show_name`,
@@ -22,14 +25,8 @@ WHERE u.`price` <= 40.00
 ORDER BY s.`date_time` ASC, p.`billing_order` ASC;
 
 
-
-
-
 -- Query 2: Query across 4NF decomposed tables (`Artist`, `ArtistGenre`, `ArtistMember`)
 -- to retrieve all members of 'Indie Rock' bands.
-
-
-
 
 SELECT 
     a.`name` AS `artist_name`,
@@ -42,11 +39,8 @@ JOIN `ArtistMember` am ON a.`name` = am.`artist_name`
 WHERE ag.`genre` = 'Indie Rock'
 ORDER BY a.`name` ASC, am.`member_name` ASC;
 
+
 -- Query 3: Join `Shows`, `Venue`, and `Books` to find all-ages shows and their co-promoters.
-
-
-
-
 
 SELECT 
     s.`name` AS `show_name`,
@@ -60,11 +54,8 @@ JOIN `Books` b ON s.`venue_name` = b.`venue_name` AND s.`date_time` = b.`date_ti
 WHERE s.`all_ages` = TRUE
 ORDER BY b.`promoter_name` ASC;
 
+
 -- Query 4: Retrieve archived footage for past shows along with headlining artist.
-
-
-
-
 
 SELECT 
     s.`name` AS `show_name`,
@@ -78,3 +69,17 @@ JOIN `PastShow` ps
 JOIN `PlaysAt` pa 
     ON s.`venue_name` = pa.`venue_name` AND s.`date_time` = pa.`date_time`
 WHERE pa.`billing_order` = 1;
+
+
+-- Query 5: public upcoming shows with lineup (replaces the 3-table join in Query 1)
+SELECT * FROM `v_public_upcoming_shows` ORDER BY `date_time`;
+ 
+-- Query 6: public artist directory with members and genres in ONE row each
+-- (compare with Query 2, which needed a join across the 4NF tables)
+SELECT * FROM `v_public_artists`;
+ 
+-- Query 7: past shows with footage and headliner (replaces Query 4)
+SELECT * FROM `v_public_past_shows`;
+ 
+-- Query 8: the industry view of venues, including the private columns
+SELECT `name`, `rate`, `tech_info`, `contact_info` FROM `v_industry_venues`;

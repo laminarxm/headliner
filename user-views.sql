@@ -3,7 +3,7 @@
 -- 1. v_public_* : for everyone
 -- 2. v_industry_* : for artists, promoters, venues (requires login)
 -- 3. v_personal_* : for logged-in acc (shows personal data)
--- Run-Order:
+-- run order:
 -- =========================================================================
 USE 'showsdb';
 

@@ -53,6 +53,7 @@ SELECT s.`name` AS `show_name`, s.`venue_name`, s.`date_time`,
 FROM `Shows` s
 JOIN `PastShow` ps ON ps.`venue_name` = s.`venue_name` AND ps.`date_time` = s.`date_time`;
 
+
 -- =========================================================================
 -- INDUSTRY VIEW
 -- =========================================================================
@@ -75,9 +76,11 @@ SELECT `name`, `address`, `capacity`, `hours`, `liquor_19_plus`,
        `rate`, `tech_info`, `contact_info`, `note`
 FROM `Venue`;
 
+
 -- =========================================================================
 -- PERSONAL VIEW
 -- =========================================================================
+
 -- ARTIST -------------------------------------------------------------------
 CREATE OR REPLACE VIEW `v_personal_artist_profile` AS
 SELECT `name`, `since`, `bio`, `bandcamp`, `contact_info`

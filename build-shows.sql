@@ -1,9 +1,10 @@
 -- =========================================================================
 -- build-shows.sql - schema for local-shows
--- Run Order: build-shows -> seed-data.sql -> views.sql -> procedures.sql
--- -> permissions.sql
--- note: DROPS script allows for database to be re-run
+-- note: DROPS allows for database to be re-run
+-- run order: build-shows, seed-data.sql, user-views.sql, procedures.sql,
+-- permissions.sql
 -- =========================================================================
+
 DROP DATABASE IF EXISTS `showsdb`;
 CREATE DATABASE `showsdb` CHARACTER SET utf8mb4;
 USE `showsdb`;

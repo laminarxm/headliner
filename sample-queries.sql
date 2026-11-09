@@ -1,4 +1,4 @@
-USE `showsdb`;
+USE showsdb;
 
 
 -- Query 1: Join Weak Entity (`Shows`), Inheritance Subclass (`UpcomingShow`),

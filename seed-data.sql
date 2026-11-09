@@ -2,7 +2,8 @@
 -- seed-data.sql
 -- notes:
 -- =========================================================================
-
+USE showsdb;
+ 
 -- Insert Venues
 
 INSERT INTO `Venue` (`name`, `address`, `tech_info`, `rate`, `hours`, `contact_info`, `capacity`, `liquor_19_plus`, `note`) VALUES

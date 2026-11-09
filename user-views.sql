@@ -5,7 +5,7 @@
 -- 3. v_personal_* : for logged-in acc (shows personal data)
 -- run order:
 -- =========================================================================
-USE 'showsdb';
+USE showsdb;
 
 DROP FUNCTION IF EXISTS `current_app_user`;
 DELIMITER $$

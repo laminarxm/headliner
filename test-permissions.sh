@@ -39,7 +39,7 @@ run gina "CALL add_artist_to_lineup('Quadratic Sound', '2027-02-01 19:00:00', 'F
 run pat  "INSERT INTO Shows VALUES ('Quadratic Sound','2027-05-05 19:00:00','Sneaky',TRUE);"  # DENIED: no base-table INSERT
  
 echo; echo "################ 4. VENUE MANAGER (vera = Capital Ballroom) ################"
-run vera "SELECT * FROM v_personal_venue_profile\G"
+run vera "SELECT * FROM v_personal_venue_profile;"
 run vera "SELECT venue_name, show_name, date_time, status, promoters, lineup FROM v_personal_venue_shows ORDER BY date_time;"
 run vera "UPDATE v_personal_venue_profile SET rate=1600.00 WHERE name='Capital Ballroom'; SELECT ROW_COUNT() AS rows_changed;"
 run vera "UPDATE v_personal_venue_profile SET rate=1.00 WHERE name='Quadratic Sound'; SELECT ROW_COUNT() AS rows_changed;"     # 0 rows changed (not hers)

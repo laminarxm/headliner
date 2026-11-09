@@ -3,7 +3,7 @@
 -- notes:
 -- run order: run last
 -- =========================================================================
-USE `showsdb`;
+USE showsdb;
  
 DROP USER IF EXISTS 'fan1'@'localhost', 'alice'@'localhost', 'carey'@'localhost',
                     'pat'@'localhost',  'gina'@'localhost',  'vera'@'localhost',
@@ -24,25 +24,25 @@ GRANT SELECT ON `showsdb`.`v_industry_promoters` TO 'artist_role','promoter_role
 GRANT SELECT ON `showsdb`.`v_industry_venues`    TO 'artist_role','promoter_role','venue_role';
  
 -- Artist -------------------------------------------------------------------
-GRANT SELECT ON `showsdb`.`v_my_artist_profile` TO 'artist_role';
+GRANT SELECT ON `showsdb`.`v_personal_artist_profile` TO 'artist_role';
 GRANT UPDATE (`bio`, `bandcamp`, `contact_info`)   -- not `name` (primary key) or `since`
-    ON `showsdb`.`v_my_artist_profile` TO 'artist_role';
-GRANT SELECT ON `showsdb`.`v_my_artist_shows` TO 'artist_role';
+    ON `showsdb`.`v_personal_artist_profile` TO 'artist_role';
+GRANT SELECT ON `showsdb`.`v_personal_artist_shows` TO 'artist_role';
  
 -- Promoter -----------------------------------------------------------------
-GRANT SELECT ON `showsdb`.`v_my_promoter_profile` TO 'promoter_role';
+GRANT SELECT ON `showsdb`.`v_personal_promoter_profile` TO 'promoter_role';
 GRANT UPDATE (`bio`, `contact_info`)
-    ON `showsdb`.`v_my_promoter_profile` TO 'promoter_role';
-GRANT SELECT ON `showsdb`.`v_my_bookings` TO 'promoter_role';
+    ON `showsdb`.`v_personal_promoter_profile` TO 'promoter_role';
+GRANT SELECT ON `showsdb`.`v_personal_bookings` TO 'promoter_role';
 GRANT EXECUTE ON PROCEDURE `showsdb`.`add_show`             TO 'promoter_role';
 GRANT EXECUTE ON PROCEDURE `showsdb`.`add_artist_to_lineup` TO 'promoter_role';
  
 -- Venue manager ------------------------------------------------------------
-GRANT SELECT ON `showsdb`.`v_my_venue_profile` TO 'venue_role';
+GRANT SELECT ON `showsdb`.`v_personal_venue_profile` TO 'venue_role';
 GRANT UPDATE (`address`, `tech_info`, `rate`, `hours`, `contact_info`,
               `capacity`, `liquor_19_plus`, `note`)  -- everything except `name`
-    ON `showsdb`.`v_my_venue_profile` TO 'venue_role';
-GRANT SELECT ON `showsdb`.`v_my_venue_shows` TO 'venue_role';
+    ON `showsdb`.`v_personal_venue_profile` TO 'venue_role';
+GRANT SELECT ON `showsdb`.`v_personal_venue_shows` TO 'venue_role';
 GRANT EXECUTE ON PROCEDURE `showsdb`.`add_show`             TO 'venue_role';
 GRANT EXECUTE ON PROCEDURE `showsdb`.`add_artist_to_lineup` TO 'venue_role';
  
